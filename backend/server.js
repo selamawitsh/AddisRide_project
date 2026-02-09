@@ -1,27 +1,39 @@
 import express from 'express';
-import cors from 'cors';
 import dotenv from 'dotenv';
-import connectDB from './config/DB.js';
+import mongoose from 'mongoose';
+import cors from 'cors';
 
+// Import routes
+import authRoutes from './routes/authRoutes.js';
+import routeRoutes from './routes/routeRoutes.js';
+import vehicleRoutes from './routes/vehicleRoutes.js';
+import locationRoutes from './routes/locationRoutes.js';
 
 dotenv.config();
 
 const app = express();
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
-connectDB();
+// Database connection
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/routes', routeRoutes);
+app.use('/api/vehicles', vehicleRoutes);
+app.use('/api/locations', locationRoutes);
+
+// Basic route
+app.get('/', (req, res) => {
+  res.json({ message: 'AddisRide API is running' });
+});
 
 const PORT = process.env.PORT || 5000;
-
-app.get('/', (req, res) => {
-  res.send('API is running...');
-});
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
-
-

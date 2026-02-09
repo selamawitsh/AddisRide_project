@@ -10,11 +10,6 @@ const StopSchema = new mongoose.Schema({
 
 const RouteSchema = new mongoose.Schema(
   {
-    routeNumber: {
-      type: String,
-      required: true,
-      unique: true
-    },
     name: {
       type: String,
       required: true
