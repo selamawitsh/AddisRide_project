@@ -1,5 +1,6 @@
 import LocationUpdate from '../models/LocationUpdate.js';
 import Vehicle from '../models/Vehicle.js';
+import User from '../models/User.js';
 
 // @desc    Get latest locations of all active vehicles
 // @route   GET /api/locations/current

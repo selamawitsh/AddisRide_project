@@ -57,7 +57,7 @@ export const createVehicle = async (req, res) => {
     res.status(201).json(populatedVehicle);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -107,6 +107,19 @@ export const assignVehicleToDriver = async (req, res) => {
     if (!driver || driver.role !== 'driver') {
       return res.status(400).json({ message: 'Invalid driver' });
     }
+
+    if (!driver.isVerified) {
+      return res.status(400).json({ message: 'Driver not verified' });
+    }
+
+    if (driver.assignedVehicle) {
+      return res.status(400).json({ message: 'Driver already has a vehicle' });
+    }
+
+    vehicle.status = 'active';
+    await vehicle.save();
+
+
 
     // Remove vehicle from previous driver if any
     await User.updateOne(

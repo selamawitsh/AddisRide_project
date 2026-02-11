@@ -21,20 +21,28 @@ export const registerUser = async (req,res) => {
             // Admin is auto-verified, drivers need verification
             isVerified: role === 'admin'
         });
+
+        // Create JWT token
+        const token = jwt.sign(
+        { id: user._id, role: user.role },
+            process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+        );
+
         res.status(201).json({
             _id: user._id,
             name: user.name,
             phoneNumber: user.phoneNumber,
-            role: user.role
+            role: user.role,
+            token
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: error.message });
         
     }
     
 }
-
 
 //login user admin/driver
 //POST /api/auth/login
@@ -51,10 +59,10 @@ export const loginUser = async (req, res) => {
             return res.status(400).json({message: "Invalid credentials"});
         }
         
-         // Create token
+        //  Create token
         const token = jwt.sign(
         { id: user._id, role: user.role },
-        process.env.JWT_SECRET,
+            process.env.JWT_SECRET,
         { expiresIn: '7d' }
         );
 
@@ -65,11 +73,11 @@ export const loginUser = async (req, res) => {
         role: user.role,
         isVerified: user.isVerified,
         assignedVehicle: user.assignedVehicle,
-        token
+        // token
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: error.message });
         
     }
     
@@ -90,3 +98,33 @@ export const getCurrentUser = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 }
+
+//delete user - admin only
+//DELETE /api/auth/:id
+// private (admin only)
+export const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ message: 'User removed' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// get all users - admin only 
+// GET /api/auth/users
+export const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find().select('-password');
+        res.json(users);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
