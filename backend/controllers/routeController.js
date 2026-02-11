@@ -90,3 +90,16 @@ export const deleteRoute = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+// @desc    Get route count
+// @route   GET /api/routes/count
+// @access  Public
+export const getRouteCount = async (req, res) => {
+  try {
+    const count = await Route.countDocuments();
+    res.json({ count });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};

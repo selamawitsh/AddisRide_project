@@ -137,3 +137,30 @@ export const assignVehicleToDriver = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+
+// @desc    Get vehicle count
+// @route   GET /api/vehicles/count
+// @access  Public
+export const getVehicleCount = async (req, res) => {
+  try {
+    const count = await Vehicle.countDocuments();
+    res.json({ count });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// @desc    Get active vehicle count
+// @route   GET /api/vehicles/active-count
+// @access  Public
+export const getActiveVehicleCount = async (req, res) => {
+  try {
+    const count = await Vehicle.countDocuments({ status: 'active' });
+    res.json({ count });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};

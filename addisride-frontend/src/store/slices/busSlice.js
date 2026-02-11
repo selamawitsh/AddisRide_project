@@ -18,11 +18,21 @@ export const fetchLiveLocations = createAsyncThunk(
   }
 )
 
+// ADD THIS FUNCTION - Get vehicles by route
+export const fetchVehiclesByRoute = createAsyncThunk(
+  'buses/fetchVehiclesByRoute',
+  async (routeId) => {
+    const response = await api.get(`/vehicles/route/${routeId}`)
+    return response.data
+  }
+)
+
 const busSlice = createSlice({
   name: 'buses',
   initialState: {
     buses: [],
     liveLocations: [],
+    vehiclesByRoute: {}, // Store vehicles by route ID
     loading: false,
     error: null,
     lastUpdated: null,
@@ -38,6 +48,10 @@ const busSlice = createSlice({
         state.liveLocations[index].coordinates = coordinates
         state.liveLocations[index].lastUpdated = new Date().toISOString()
       }
+    },
+    setVehiclesForRoute: (state, action) => {
+      const { routeId, vehicles } = action.payload
+      state.vehiclesByRoute[routeId] = vehicles
     },
   },
   extraReducers: (builder) => {
@@ -67,8 +81,21 @@ const busSlice = createSlice({
         state.loading = false
         state.error = action.error.message
       })
+      .addCase(fetchVehiclesByRoute.pending, (state) => {
+        state.loading = true
+        state.error = null
+      })
+      .addCase(fetchVehiclesByRoute.fulfilled, (state, action) => {
+        state.loading = false
+        // This thunk needs to store data differently since it's route-specific
+        // We'll handle this in the component
+      })
+      .addCase(fetchVehiclesByRoute.rejected, (state, action) => {
+        state.loading = false
+        state.error = action.error.message
+      })
   },
 })
 
-export const { setBuses, updateBusLocation } = busSlice.actions
+export const { setBuses, updateBusLocation, setVehiclesForRoute } = busSlice.actions
 export default busSlice.reducer
