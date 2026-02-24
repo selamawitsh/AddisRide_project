@@ -1,22 +1,29 @@
 import mongoose from 'mongoose';
 
 const StopSchema = new mongoose.Schema({
-  name:{type:String, required:true},
-  lat:{type:Number, required:true},
-  lng:{type:Number, required:true},
-},
-{id:false}
-);
+  name: { 
+    type: String, 
+    required: true,
+    trim: true
+  },
+  lat: { 
+    type: Number, 
+    required: true 
+  },
+  lng: { 
+    type: Number, 
+    required: true 
+  }
+}, { _id: false });
 
 const RouteSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true
+      required: true,
+      trim: true
     },
     stops: [StopSchema],
-
-    // Path used to draw the line on the map
     path: [
       {
         lat: Number,
@@ -28,5 +35,38 @@ const RouteSchema = new mongoose.Schema(
 );
 
 const Route = mongoose.model('Route', RouteSchema);
-
 export default Route;
+
+
+// import mongoose from 'mongoose';
+
+// const StopSchema = new mongoose.Schema({
+//   name:{type:String, required:true},
+//   lat:{type:Number, required:true},
+//   lng:{type:Number, required:true},
+// },
+// {id:false}
+// );
+
+// const RouteSchema = new mongoose.Schema(
+//   {
+//     name: {
+//       type: String,
+//       required: true
+//     },
+//     stops: [StopSchema],
+
+//     // Path used to draw the line on the map
+//     path: [
+//       {
+//         lat: Number,
+//         lng: Number
+//       }
+//     ]
+//   },
+//   { timestamps: true }
+// );
+
+// const Route = mongoose.model('Route', RouteSchema);
+
+// export default Route;
